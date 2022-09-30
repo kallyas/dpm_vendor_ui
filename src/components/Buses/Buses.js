@@ -156,7 +156,7 @@ class Buses extends Component {
     } = this.state;
     // make trips in each bus the length of the trips array
     buses.forEach((bus) => {
-        bus.trips = bus.trips.length;
+        bus.trips = bus?.trips?.length;
     })
     const allChecked = buses.every((bus) => bus.checked === true);
     const checkedBuses = buses.filter((bus) => bus.checked === true);
