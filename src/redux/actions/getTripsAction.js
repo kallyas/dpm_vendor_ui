@@ -36,7 +36,7 @@ const processData = (dispatch, data) => {
 
 export const getTrips = () => async (dispatch) => {
   try {
-    const data = await getData("/trips")
+    const data = await getData("/trips?page=1&limit=100")
     return processData(dispatch, data.data)
   } catch (error) {
     const result = await renewSession(error)
@@ -46,7 +46,7 @@ export const getTrips = () => async (dispatch) => {
         payload: error,
       })
     } else {
-      const data = await getData("/trips")
+      const data = await getData("/trips?page=1&limit=100")
       return processData(dispatch, data.data)
     }
   }
