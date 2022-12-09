@@ -57,6 +57,7 @@ class LoginPage extends Component {
       toast.success(data.message);
       localStorage.setItem("DPMAccessToken", data.access_token);
       localStorage.setItem("DPMRefreshToken", data.refresh_token);
+      localStorage.setItem("OperationArea", data?.region_name);
       window.location.assign('/dashboard')
     } else {
       toast.error(error);
