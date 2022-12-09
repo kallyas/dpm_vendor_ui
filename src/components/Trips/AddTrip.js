@@ -42,12 +42,11 @@ const AddTrip = (props) => {
       routes: { data, error },
     } = props;
     if (data) {
-        // get Operations Area from local storage
-        const operationArea = localStorage.getItem("OperationArea");
-        // filter routes by operation area
-        const filteredRoutes = data.filter(route => route?.route_region === operationArea.toLowerCase());
-        // set filtered routes to state
-        setRoutes(filteredRoutes);
+      const operationArea = localStorage.getItem("OperationArea");
+      const filteredRoutes = data.filter(
+        (route) => route?.route_region === operationArea.toLowerCase()
+      );
+      setRoutes(filteredRoutes);
     } else if (error) {
       toast.error(error.message);
     }
