@@ -44,7 +44,7 @@ const AddTrip = (props) => {
     if (data) {
       const operationArea = localStorage.getItem("OperationArea");
       const filteredRoutes = data.filter(
-        (route) => route?.route_region.toLowerCase() === operationArea.toLowerCase()
+        (route) => route?.route_region?.toLowerCase() === operationArea?.toLowerCase()
       );
       console.log(filteredRoutes);
       setRoutes(filteredRoutes);
