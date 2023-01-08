@@ -46,7 +46,6 @@ const AddTrip = (props) => {
       const filteredRoutes = data.filter(
         (route) => route?.route_region?.toLowerCase() === operationArea?.toLowerCase()
       );
-      console.log(filteredRoutes);
       setRoutes(filteredRoutes);
     } else if (error) {
       toast.error(error.message);
