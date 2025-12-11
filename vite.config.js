@@ -12,6 +12,7 @@ export default defineConfig({
   },
   server: {
     port: 8080,
+    allowedHosts: ["vendors.roadslinks.com"],
   },
   build: {
     outDir: "build",
