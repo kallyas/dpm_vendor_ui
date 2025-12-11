@@ -1,18 +1,15 @@
 import React from 'react';
-import { Redirect, Route  } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 
 function PrivateRoute({component:Component , ...rest}){
-    return (
-        <Route {...rest} render={props=>(
-            localStorage.getItem('bareFootToken') !== null ?
-            (<Component {...props} />) :
-            (<Redirect to={{
-                pathname:'/login',
-                state:{redirectTo: {...rest}}
-            }} />)
-        )} />
+    const isAuthenticated = localStorage.getItem('bareFootToken') !== null;
+
+    return isAuthenticated ? (
+        <Component {...rest} />
+    ) : (
+        <Navigate to="/login" replace state={{redirectTo: {...rest}}} />
     );
 }
 
