@@ -1,5 +1,5 @@
 import React, {Component} from "react"
-import {Container, Grid} from "@mui/material"
+import {Container, Box, Typography} from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
 import {getTrips} from "../../redux/slices/tripsSlice"
 import {connect} from "react-redux"
@@ -180,17 +180,28 @@ class Trips extends Component {
     } = checkedTrips[0] ? checkedTrips[0] : [{}]
     const oneChecked = checkedTrips.length === 1
     return (
-      <Container style={{paddingTop: "50px"}} maxWidth={false}>
-        <Grid
-          style={{
-            textAlign: "center",
-            fontFamily: "verdana",
-            fontSize: "30px",
-            paddingBottom: "50px",
-          }}
-        >
-          Trips
-        </Grid>
+      <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography 
+            variant="h4" 
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              color: "#A2302F",
+              mb: 1,
+            }}
+          >
+            Trips Management
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{
+              color: "text.secondary",
+            }}
+          >
+            Schedule and manage all your trips efficiently.
+          </Typography>
+        </Box>
         {showAdd ? (
           <AddTrip
             submitting={submitting}
