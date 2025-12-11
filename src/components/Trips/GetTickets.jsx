@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import {getTickets} from "../../redux/actions/getTickets"
+import {getTickets} from "../../redux/slices/ticketsSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 import {Container, Typography, CircularProgress} from "@mui/material"
