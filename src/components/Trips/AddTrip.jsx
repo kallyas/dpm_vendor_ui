@@ -12,8 +12,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { connect } from "react-redux";
-import { getVehicles } from "../../redux/actions/getVehiclesAction";
-import { getRoutes } from "../../redux/actions/getRoutesAction";
+import { getVehicles } from "../../redux/slices/vehiclesSlice";
+import { getRoutes } from "../../redux/slices/routesSlice";
 import { toast } from "react-toastify";
 
 const AddTrip = (props) => {
