@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Grid, StepButton, Tooltip } from '@mui/material';
 import {UserCard} from '../shared/userCard/UserCard';
-import { getStaff } from '../../redux/actions/getStaffAction';
+import { getStaff } from '../../redux/slices/staffSlice';
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import AddUser from './AddUser';
