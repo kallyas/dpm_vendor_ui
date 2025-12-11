@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import {Container, Typography} from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
-import {getRoutes} from "../../redux/actions/getRoutesAction"
+import {getRoutes} from "../../redux/slices/routesSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 
