@@ -1,7 +1,6 @@
 import React, {useState} from "react"
 import {
   Paper,
-  makeStyles,
   Grid,
   StepButton,
   Link,
@@ -19,40 +18,7 @@ import {
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn"
 import SideIconsMenu from "./SideIconsMenu"
 
-const styles = makeStyles((theme) => ({
-  container: {
-    width: "15%",
-    height: "100vh",
-    background:
-      "linear-gradient(180deg, #FFFFFF 100%, rgba(255, 255, 255, 0) 100%)",
-    // borderRadius: '0px 80px 0px 0px',
-    display: "inline-flex",
-    justifyContent: "center",
-    position: "fixed",
-    zIndex: 100,
-  },
-  logo: {
-    borderRadius: "50%",
-    width: "120px",
-    height: "120px",
-    margin: "auto",
-    display: "block",
-  },
-  label: {
-    position: "relative",
-    top: "-4px",
-    overflowWrap: "break-word",
-    display: "inline",
-  },
-  record: {
-    textAlign: "left",
-    marginBottom: "40px",
-    paddingLeft: "30px",
-  },
-}))
-
 export const SideNav = (props) => {
-  const classes = styles()
   const [hidden, setHide] = useState(true)
 
   const toggleNav = () => {
@@ -66,7 +32,16 @@ export const SideNav = (props) => {
           ? {left: "-18%", transition: "left 0.5s"}
           : {left: "0px", transition: "left 0.5s"}
       }
-      className={classes.container}
+      sx={{
+        width: "15%",
+        height: "100vh",
+        background:
+          "linear-gradient(180deg, #FFFFFF 100%, rgba(255, 255, 255, 0) 100%)",
+        display: "inline-flex",
+        justifyContent: "center",
+        position: "fixed",
+        zIndex: 100,
+      }}
       elevation={1}
     >
       <StepButton
@@ -99,7 +74,13 @@ export const SideNav = (props) => {
         }}
       >
         <img
-          className={classes.logo}
+          style={{
+            borderRadius: "50%",
+            width: "120px",
+            height: "120px",
+            margin: "auto",
+            display: "block",
+          }}
           alt="Bus operator logo"
           src="https://via.placeholder.com/150"
         />
@@ -111,46 +92,46 @@ export const SideNav = (props) => {
             marginTop: "50px",
           }}
         >
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/">
               <Dashboard />
-              <span className={classes.label}>Dashboard</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Dashboard</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/vehicles">
               <DirectionsBus />
-              <span className={classes.label}>Buses</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Buses</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/trips">
               <CardTravel />
-              <span className={classes.label}>Trips</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Trips</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/routes">
               <CompareArrows />
-              <span className={classes.label}>Routes</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Routes</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/users">
               <People />
-              <span className={classes.label}>Staff</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Staff</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/transactions">
               <MonetizationOnIcon />
-              <span className={classes.label}>Transactions</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Transactions</span>
             </Link>
           </Grid>
-          <Grid className={classes.record}>
+          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
             <Link href="/logout">
               <ExitToApp />
-              <span className={classes.label}>Logout</span>
+              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Logout</span>
             </Link>
           </Grid>
         </Grid>
