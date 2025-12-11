@@ -17,36 +17,7 @@ import {MakeRow} from "../tableRow/TableRow"
 import {TableSkeleton} from "./TableSkeleton"
 import PaginationControlled from "../pagination/Pagination"
 
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-    "&:hover": {
-      backgroundColor: "#FFEFEF",
-      transition: "background-color 0.5s",
-    },
-  },
-}))(TableRow)
-
-const useStyles = makeStyles({
-  table: {
-    width: "100%",
-  },
-  check: {
-    margin: "0px 20px 4px 10px",
-  },
-  tableContainer: {
-    width: "90%",
-    margin: "5px auto auto 5%",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-})
-
 export default function SharedTable(props) {
-  const classes = useStyles()
   const {
     tableBody,
     headers,
@@ -66,7 +37,13 @@ export default function SharedTable(props) {
 
   return (
     <>
-      <Grid className={classes.tableContainer}>
+      <Grid sx={{
+        width: "90%",
+        margin: "5px auto auto 5%",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}>
         {search && (
           <Input
             placeholder="Search"
@@ -110,13 +87,19 @@ export default function SharedTable(props) {
           </Grid>
         )}
       </Grid>
-      <TableContainer className={classes.tableContainer} component={Paper}>
-        <Table className={classes.table} aria-label="customized table">
+      <TableContainer sx={{
+        width: "90%",
+        margin: "5px auto auto 5%",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }} component={Paper}>
+        <Table sx={{ width: "100%" }} aria-label="customized table">
           <TableHead>
             <TableRow>
               {MakeRow({
                 record: headers,
-                classes,
+                classes: { check: { margin: "0px 20px 4px 10px" } },
                 header: true,
                 allChecked,
                 handleCheck,
@@ -132,15 +115,23 @@ export default function SharedTable(props) {
           ) : (
             <TableBody>
               {tableBody.slice((page - 1) * 7, page * 7).map((row) => (
-                <StyledTableRow>
+                <TableRow sx={{
+                  "&:nth-of-type(odd)": {
+                    backgroundColor: (theme) => theme.palette.action.hover,
+                  },
+                  "&:hover": {
+                    backgroundColor: "#FFEFEF",
+                    transition: "background-color 0.5s",
+                  },
+                }}>
                   {MakeRow({
                     record: headers,
-                    classes,
+                    classes: { check: { margin: "0px 20px 4px 10px" } },
                     content: row,
                     handleCheck,
                     allChecked,
                   })}
-                </StyledTableRow>
+                </TableRow>
               ))}
             </TableBody>
           )}
