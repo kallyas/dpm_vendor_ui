@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react"
-import { Container, Grid, Typography } from "@mui/material"
+import { Container, Box, Typography, Grid } from "@mui/material"
 import {TrendingUp, Alarm} from "@mui/icons-material"
 import {RouteCard} from "../shared/routeCard/RouteCard"
 import {TripCard} from "../shared/tripCard/TripCard"
@@ -48,60 +48,100 @@ const Dashboard = (props) => {
   }, [props.routes, props.trips])
 
   return (
-    <Container maxWidth={false} sx={{
-      width: "100%",
-      display: "block",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: "100",
-      padding: "50px 0px 0px 7%",
+    <Container maxWidth="lg" sx={{
+      py: 4,
+      px: {xs: 2, sm: 3, md: 4},
     }}>
-      <Grid
-        style={{
-          color: "#A2302F",
-          fontFamily: "Roboto",
-          fontStyle: "normal",
-          fontWeight: "normal",
-          fontSize: "48px",
-          lineHeight: "56px",
-          textAlign: "center",
-          paddingBottom: "40px",
-        }}
-      >
-        Dashboard
-      </Grid>
-      <Grid sx={{
-        display: "inline-flex",
-        color: "#A2302F",
-      }}>
-        <TrendingUp style={{padding: "0 5px", fontSize: "35px"}} />
-        <Typography style={{fontSize: "25px"}}>Trending Routes</Typography>
-      </Grid>
-      <Container maxWidth={false} style={{display: "flex", flexWrap: "wrap"}}>
-        {fetching === true ? (
-          <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
-            <CardsSkeleton />
-          </ContentLoader>
-        ) : (
-          routes.map((route) => <RouteCard route={route} />)
-        )}
-      </Container>
-      <Grid sx={{
-        display: "inline-flex",
-        color: "#A2302F",
-      }}>
-        <Alarm style={{padding: "0 5px", fontSize: "35px"}} />
-        <Typography style={{fontSize: "25px"}}>Upcoming Trips</Typography>
-      </Grid>
-      <Container maxWidth={false} style={{display: "flex", flexWrap: "wrap"}}>
-        {fetching === true ? (
-          <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
-            <CardsSkeleton />{" "}
-          </ContentLoader>
-        ) : (
-          trips.map((trip) => <TripCard trip={trip} />)
-        )}
-      </Container>
+      <Box sx={{ mb: 5 }}>
+        <Typography 
+          variant="h3" 
+          component="h1"
+          sx={{
+            fontWeight: 700,
+            color: "#A2302F",
+            mb: 1,
+          }}
+        >
+          Dashboard
+        </Typography>
+        <Typography 
+          variant="body1" 
+          sx={{
+            color: "text.secondary",
+            fontSize: "1rem",
+          }}
+        >
+          Welcome back! Here's an overview of your operations.
+        </Typography>
+      </Box>
+
+      {/* Trending Routes Section */}
+      <Box sx={{ mb: 5 }}>
+        <Box sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          mb: 3,
+        }}>
+          <TrendingUp sx={{ fontSize: "2.5rem", color: "#A2302F" }} />
+          <Typography 
+            variant="h5" 
+            sx={{
+              fontWeight: 600,
+              color: "#A2302F",
+            }}
+          >
+            Trending Routes
+          </Typography>
+        </Box>
+        <Grid container spacing={2}>
+          {fetching === true ? (
+            <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
+              <CardsSkeleton />
+            </ContentLoader>
+          ) : (
+            routes.map((route) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={route.id}>
+                <RouteCard route={route} />
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </Box>
+
+      {/* Upcoming Trips Section */}
+      <Box sx={{ mb: 5 }}>
+        <Box sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          mb: 3,
+        }}>
+          <Alarm sx={{ fontSize: "2.5rem", color: "#A2302F" }} />
+          <Typography 
+            variant="h5" 
+            sx={{
+              fontWeight: 600,
+              color: "#A2302F",
+            }}
+          >
+            Upcoming Trips
+          </Typography>
+        </Box>
+        <Grid container spacing={2}>
+          {fetching === true ? (
+            <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
+              <CardsSkeleton />
+            </ContentLoader>
+          ) : (
+            trips.map((trip) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={trip.id}>
+                <TripCard trip={trip} />
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </Box>
     </Container>
   )
 }
