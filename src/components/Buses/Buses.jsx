@@ -157,11 +157,12 @@ class Buses extends Component {
       fetching,
     } = this.state;
     // make trips in each bus the length of the trips array
-    buses.forEach((bus) => {
-        bus.trips = bus?.trips?.length;
-    })
-    const allChecked = buses.every((bus) => bus.checked === true);
-    const checkedBuses = buses.filter((bus) => bus.checked === true);
+    const busesWithTripCount = buses.map((bus) => ({
+        ...bus,
+        trips: bus?.trips?.length || 0
+    }));
+    const allChecked = busesWithTripCount.every((bus) => bus.checked === true);
+    const checkedBuses = busesWithTripCount.filter((bus) => bus.checked === true);
     const { capacity: busCapacity, number_plate: numberPlate } = checkedBuses[0]
       ? checkedBuses[0]
       : [{}];
@@ -183,7 +184,7 @@ class Buses extends Component {
           <Typography 
             variant="body1" 
             sx={{
-              color: "text.secondary",
+              color: "#666",
             }}
           >
             Manage and monitor all vehicles in your fleet.
@@ -225,7 +226,7 @@ class Buses extends Component {
           toggleUpdate={oneChecked && this.toggleUpdate}
           toggleAdd={this.toggleAdd}
           handleCheck={this.handleCheck}
-          tableBody={buses}
+          tableBody={busesWithTripCount}
           headers={headers}
           allChecked={allChecked}
         />
