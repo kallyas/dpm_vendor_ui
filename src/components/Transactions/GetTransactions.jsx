@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import {getTransactions} from "../../redux/actions/getTransactions"
+import {getTransactions} from "../../redux/slices/transactionsSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 import {Container, Typography} from "@mui/material"
