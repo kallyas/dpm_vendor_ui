@@ -1,31 +1,16 @@
 import React, {useState, useEffect} from "react"
+import { Container, Grid, Typography } from "@mui/material"
 import {TrendingUp, Alarm} from "@mui/icons-material"
 import {RouteCard} from "../shared/routeCard/RouteCard"
 import {TripCard} from "../shared/tripCard/TripCard"
-import {getTrips} from "../../redux/actions/getTripsAction"
-import {getRoutes} from "../../redux/actions/getRoutesAction"
+import {getTrips} from "../../redux/slices/tripsSlice"
+import {getRoutes} from "../../redux/slices/routesSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 import {CardsSkeleton} from "./skeleton"
 import ContentLoader from "react-content-loader"
 
-export const useStyles = makeStyles((theme) => ({
-  container: {
-    width: "100%",
-    display: "block",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: "100",
-    padding: "50px 0px 0px 7%",
-  },
-  title: {
-    display: "inline-flex",
-    color: "#A2302F",
-  },
-}))
-
 const Dashboard = (props) => {
-  const classes = useStyles()
   const [trips, setTrips] = useState([])
   const [routes, setRoutes] = useState([])
   const [fetching, setFetching] = useState(true)
@@ -63,7 +48,14 @@ const Dashboard = (props) => {
   }, [props.routes, props.trips])
 
   return (
-    <Container maxWidth={false} className={classes.container}>
+    <Container maxWidth={false} sx={{
+      width: "100%",
+      display: "block",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: "100",
+      padding: "50px 0px 0px 7%",
+    }}>
       <Grid
         style={{
           color: "#A2302F",
@@ -78,7 +70,10 @@ const Dashboard = (props) => {
       >
         Dashboard
       </Grid>
-      <Grid className={classes.title}>
+      <Grid sx={{
+        display: "inline-flex",
+        color: "#A2302F",
+      }}>
         <TrendingUp style={{padding: "0 5px", fontSize: "35px"}} />
         <Typography style={{fontSize: "25px"}}>Trending Routes</Typography>
       </Grid>
@@ -91,7 +86,10 @@ const Dashboard = (props) => {
           routes.map((route) => <RouteCard route={route} />)
         )}
       </Container>
-      <Grid className={classes.title}>
+      <Grid sx={{
+        display: "inline-flex",
+        color: "#A2302F",
+      }}>
         <Alarm style={{padding: "0 5px", fontSize: "35px"}} />
         <Typography style={{fontSize: "25px"}}>Upcoming Trips</Typography>
       </Grid>
