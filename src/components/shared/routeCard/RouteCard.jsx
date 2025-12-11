@@ -1,74 +1,104 @@
 import React from "react"
-import { Paper, Grid, Typography } from "@mui/material"
-import {DirectionsBus, MoreVert} from "@mui/icons-material"
+import { Card, CardContent, CardActionArea, Box, Typography, Stack } from "@mui/material"
+import {DirectionsBus, ArrowForward} from "@mui/icons-material"
 import {Link} from "react-router-dom"
 
 export const RouteCard = (props) => {
   const {route} = props
 
   return (
-    <Paper sx={{
-      width: "280px",
-      height: "170px",
-      background: "#EEEEEE",
-      "&:hover": {
-        opacity: 0.4,
-      },
-      boxShadow: "4px 5px 6px rgba(162, 48, 47, 0.06)",
-      borderRadius: "5px",
-      margin: "20px 10px",
-    }}>
-      <Grid>
-        <Link style={{textDecoration: "none"}} to={`/routes/${route.id}`}>
-          <Typography sx={{
-            fontFamily: "Roboto",
-            fontStyle: "normal",
-            fontWeight: "500",
-            fontSize: "24px",
-            lineHeight: "28px",
-            color: "#865E5D",
-            padding: "7px 20px 0px 20px",
-          }}>
-            {route.start_point}
-          </Typography>
-          <Grid
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "cnter",
+    <Card 
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 24px rgba(162, 48, 47, 0.15)",
+        },
+        borderRadius: "12px",
+        overflow: "hidden",
+        background: "#EEEEEE",
+        border: "1px solid rgba(162, 48, 47, 0.1)",
+      }}
+    >
+      <CardActionArea 
+        component={Link} 
+        to={`/routes/${route.id}`}
+        sx={{
+          textDecoration: "none",
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <CardContent sx={{ flexGrow: 1, width: "100%", pb: 2 }}>
+          {/* From - To Route Display */}
+          <Stack 
+            direction="row" 
+            alignItems="center" 
+            spacing={1.5} 
+            sx={{ mb: 3 }}
+          >
+            <Typography 
+              variant="h6" 
+              sx={{
+                fontWeight: 700,
+                color: "#865E5D",
+                flex: 1,
+              }}
+            >
+              {route.start_point}
+            </Typography>
+            <ArrowForward 
+              sx={{ 
+                color: "#A09D96",
+                fontSize: "1.5rem",
+              }} 
+            />
+            <Typography 
+              variant="h6" 
+              sx={{
+                fontWeight: 700,
+                color: "#865E5D",
+                flex: 1,
+              }}
+            >
+              {route.destination}
+            </Typography>
+          </Stack>
+
+          {/* Trips Count */}
+          <Stack 
+            direction="row" 
+            alignItems="center" 
+            spacing={1}
+            sx={{
+              backgroundColor: "rgba(162, 48, 47, 0.08)",
+              borderRadius: "8px",
+              padding: "12px 16px",
+              width: "100%",
             }}
           >
-            <Grid style={{color: "#A09D96"}}>
-              <MoreVert
-                style={{display: "block", fontSize: "47px", height: "47px"}}
-              />
-              <MoreVert
-                style={{display: "block", fontSize: "47px", height: "47px"}}
-              />
-            </Grid>
-            <Grid sx={{
-              display: "inline-flex",
-              color: "#A09D96",
-            }}>
-              <DirectionsBus style={{fontSize: "35px", padding: "0px 10px"}} />
-              <Typography style={{fontSize: "25px"}}>
-                {route.trips === 0 ? "No" : route.trips} Trips
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography sx={{
-            fontFamily: "Roboto",
-            fontStyle: "normal",
-            fontWeight: "400",
-            fontSize: "24px",
-            lineHeight: "28px",
-            color: "#865E5D",
-            padding: "0px 20px 10px 20px",
-          }}>
-            {route.destination}
-          </Typography>
-        </Link>
-      </Grid>
-    </Paper>
+            <DirectionsBus 
+              sx={{ 
+                color: "#A2302F",
+                fontSize: "1.5rem",
+              }} 
+            />
+            <Typography 
+              variant="body2" 
+              sx={{
+                fontWeight: 600,
+                color: "#A2302F",
+              }}
+            >
+              {route.trips === 0 ? "No" : route.trips} {route.trips === 1 ? "Trip" : "Trips"}
+            </Typography>
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }
