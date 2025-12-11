@@ -2,10 +2,12 @@ import React, {useEffect, useState} from "react"
 import {getTickets} from "../../redux/slices/ticketsSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
-import {Container, Typography, CircularProgress} from "@mui/material"
+import {Container, Box, Typography, CircularProgress, Chip} from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
+import {useParams} from "react-router-dom"
 
 const Get = (props) => {
+  const params = useParams()
   const [tickets, setTicktes] = useState([])
   const [totalCapacity, setTotalCapacity] = useState(null)
   const [noTickets, setNoTicktes] = useState(false)
@@ -22,8 +24,8 @@ const Get = (props) => {
   ]
 
   useEffect(() => {
-    const {getTickets, match} = props
-    getTickets(match.params.id)
+    const {getTickets} = props
+    getTickets(params.id)
   }, [])
   useEffect(() => {
     const {tickets} = props
@@ -61,29 +63,46 @@ const Get = (props) => {
   return (
     <>
       {tickets && (
-        <Container maxWidth={false}>
-          <Typography
-            variant="h4"
-            style={{
-              textAlign: "center",
-              paddingTop: noTickets ? 100 : 30,
-            }}
-          >
-            {noTickets ? "No tickets available" : "Tickets"}
-          </Typography>
-          <Typography
-            variant="h6"
-            color="primary"
-            style={{textAlign: "center", paddingTop: 10}}
-          >
-            {fetching ? (
-              <CircularProgress />
-            ) : noTickets ? (
-              ""
-            ) : (
-              `Total Capacity: ${totalCapacity}`
+        <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+          <Box sx={{ mb: 4 }}>
+            <Typography 
+              variant="h4" 
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                color: "#A2302F",
+                mb: 1,
+              }}
+            >
+              {noTickets ? "No Tickets Available" : "Trip Tickets"}
+            </Typography>
+            <Typography 
+              variant="body1" 
+              sx={{
+                color: "#666",
+              }}
+            >
+              {noTickets ? "There are no tickets booked for this trip yet." : "View all booked tickets for this trip."}
+            </Typography>
+            {!noTickets && !fetching && totalCapacity && (
+              <Chip 
+                label={`Total Capacity: ${totalCapacity}`}
+                sx={{
+                  mt: 2,
+                  backgroundColor: "#A2302F",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                  padding: "20px 10px",
+                }}
+              />
             )}
-          </Typography>
+            {fetching && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                <CircularProgress sx={{ color: "#A2302F" }} />
+              </Box>
+            )}
+          </Box>
           {!noTickets ? (
             <SharedTable
               fetching={fetching}
