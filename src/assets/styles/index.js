@@ -1,6 +1,6 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
-const AppTheme = createMuiTheme({
+const AppTheme = createTheme({
   palette: {
     primary: {
       main: '#A2302F',
@@ -19,7 +19,6 @@ const AppTheme = createMuiTheme({
       'Arial',
       'sans-serif'
     ].join(','),
-    useNextVariants: true
   },
 });
 
