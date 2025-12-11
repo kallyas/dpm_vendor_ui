@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Container, Grid } from "@mui/material";
 import BusesTable from "../shared/sharedTable/SharedTable";
-import { getVehicles } from "../../redux/actions/getVehiclesAction";
+import { getVehicles } from "../../redux/slices/vehiclesSlice";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import AddBus from "./AddBus";
