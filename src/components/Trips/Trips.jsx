@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import {Container, Grid} from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
-import {getTrips} from "../../redux/actions/getTripsAction"
+import {getTrips} from "../../redux/slices/tripsSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 import AddTrip from "./AddTrip"
