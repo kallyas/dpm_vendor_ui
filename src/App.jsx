@@ -1,5 +1,5 @@
 import React from "react"
-import {BrowserRouter as Router, Route, Routes as RouterRoutes, Navigate} from "react-router-dom"
+import {BrowserRouter as Router, Route, Routes as RouterRoutes, Navigate, useLocation} from "react-router-dom"
 import {ToastContainer} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import {Provider} from "react-redux"
@@ -22,6 +22,32 @@ import SingleRoute from "./components/singleRoute/SingleRoute"
 import GetTickets from "./components/Trips/GetTickets"
 import GetTransactions from "./components/Transactions/GetTransactions"
 
+function AppContent() {
+  const location = useLocation();
+  const publicRoutes = ['/login', '/logout'];
+  const showSideNav = !publicRoutes.includes(location.pathname);
+
+  return (
+    <>
+      {showSideNav && <SideNav />}
+      <RouterRoutes>
+        <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
+        <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
+        <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
+        <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
+        <Route path="/users" element={<Staff />} />
+        <Route path="/routes/:id" element={<SingleRoute />} />
+        <Route path="/trip/:id" element={<GetTickets />} />
+        <Route path="/transactions" element={<GetTransactions />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </RouterRoutes>
+    </>
+  );
+}
+
 function App(props) {
   return (
     <ThemeProvider theme={AppTheme}>
@@ -31,21 +57,7 @@ function App(props) {
         <div className="App">
           <div style={{minHeight: "95vh"}}>
             <Router>
-              <SideNav />
-              <RouterRoutes>
-                <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/logout" element={<Logout />} />
-                <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
-                <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
-                <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
-                <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
-                <Route path="/users" element={<Staff />} />
-                <Route path="/routes/:id" element={<SingleRoute />} />
-                <Route path="/trip/:id" element={<GetTickets />} />
-                <Route path="/transactions" element={<GetTransactions />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </RouterRoutes>
+              <AppContent />
             </Router>
           </div>
           <Footer />
