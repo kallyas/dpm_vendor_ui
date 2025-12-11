@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Grid } from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import BusesTable from "../shared/sharedTable/SharedTable";
 import { getVehicles } from "../../redux/slices/vehiclesSlice";
 import { connect } from "react-redux";
@@ -44,9 +44,11 @@ class Buses extends Component {
     } = nextProps;
     if (data) {
       this.setState({ buses: data, fetching: false });
-    } else {
+    } else if (error) {
       this.setState({ fetching: false });
       toast.error(error.message);
+    } else {
+      this.setState({ fetching: false });
     }
   }
 
@@ -165,17 +167,28 @@ class Buses extends Component {
       : [{}];
     const oneChecked = checkedBuses.length === 1;
     return (
-      <Container style={{ paddingTop: "50px" }} maxWidth={false}>
-        <Grid
-          style={{
-            textAlign: "center",
-            fontFamily: "verdana",
-            fontSize: "30px",
-            paddingBottom: "50px",
-          }}
-        >
-          Vehicles
-        </Grid>
+      <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography 
+            variant="h4" 
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              color: "#A2302F",
+              mb: 1,
+            }}
+          >
+            Vehicles Management
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{
+              color: "text.secondary",
+            }}
+          >
+            Manage and monitor all vehicles in your fleet.
+          </Typography>
+        </Box>
         {showAdd ? (
           <AddBus
             submitting={submitting}
