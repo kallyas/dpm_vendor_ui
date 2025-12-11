@@ -1,7 +1,8 @@
-import { configure } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+import '@testing-library/jest-dom';
 
-configure({ adapter: new Adapter() });
 global.cloudinary = {
   createUploadWidget: (response) => {
     // eslint-disable-next-line no-unused-expressions
