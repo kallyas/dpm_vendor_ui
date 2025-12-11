@@ -4,7 +4,7 @@ class Api {
     static axiosInstance = axios;
     static ACCESS_TOKEN = localStorage.getItem('DPMAccessToken');
     static initiate() {
-        const baseURL = import.meta.env.VITE_APP_baseURL || process.env.REACT_APP_baseURL;
+        const baseURL = import.meta.env.VITE_APP_baseURL;
         Api.axiosInstance.defaults.baseURL = baseURL;
         Api.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${Api.ACCESS_TOKEN}`;
         Api.axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
