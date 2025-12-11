@@ -1,5 +1,5 @@
 import React, {Component} from "react"
-import {Container, Typography} from "@mui/material"
+import {Container, Box, Typography} from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
 import {getRoutes} from "../../redux/slices/routesSlice"
 import {connect} from "react-redux"
@@ -56,12 +56,30 @@ class Routes extends Component {
 
   render() {
     const {headers, routes, fetching} = this.state
-    const allChecked = routes.every((route) => route.checked == true)
+    const allChecked = routes && routes.length > 0 && routes.every((route) => route.checked == true)
     return (
-      <Container maxWidth={false}>
-        <Typography variant="h4" style={{textAlign: "center", paddingTop: 30}}>
-          Routes
-        </Typography>
+      <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography 
+            variant="h4" 
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              color: "#A2302F",
+              mb: 1,
+            }}
+          >
+            Routes Management
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{
+              color: "text.secondary",
+            }}
+          >
+            View and manage all routes in your system.
+          </Typography>
+        </Box>
         <SharedTable
           fetching={fetching}
           hideDock={true}
