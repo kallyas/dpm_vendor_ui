@@ -3,18 +3,19 @@ import PropTypes from "prop-types";
 import {
   Button,
   Container,
-  FormControl,
-  InputLabel,
-  Input,
-  Grid,
+  TextField,
+  Box,
+  Typography,
+  Paper,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
-import TopNav from "../shared/topNav/Topnav";
-import { PersonPin, Person, Lock } from "@mui/icons-material";
-import { useStyles } from "./login.styles";
-import { login } from "../../redux/actions/login";
+import { Email, Lock, Visibility, VisibilityOff, LoginOutlined } from "@mui/icons-material";
+import { login } from "../../redux/slices/authSlice";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import logo from "../../assets/images/dpm_logo.png";
 
 class LoginPage extends Component {
   constructor(props) {
@@ -24,15 +25,26 @@ class LoginPage extends Component {
       password: "",
       buttonDisabled: true,
       submitting: false,
+      showPassword: false,
     };
   }
 
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
-    if (this.state.username !== "" && this.state.password !== "") {
-      this.setState({ buttonDisabled: false });
-    } else {
-      this.setState({ buttonDisabled: true });
+    this.setState({ [target.name]: target.value }, () => {
+      const { username, password } = this.state;
+      this.setState({ buttonDisabled: !username || !password });
+    });
+  };
+
+  togglePasswordVisibility = () => {
+    this.setState((prevState) => ({
+      showPassword: !prevState.showPassword,
+    }));
+  };
+
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !this.state.buttonDisabled) {
+      this.submit();
     }
   };
 
@@ -66,62 +78,193 @@ class LoginPage extends Component {
   }
 
   render() {
-    const { username, password, buttonDisabled, submitting } = this.state;
-    const classes = useStyles;
+    const { username, password, buttonDisabled, submitting, showPassword } = this.state;
+
     return (
-      <Container style={classes.authContainer} maxWidth={false}>
-        <TopNav />
-        <Grid style={classes.formContainer}>
-          <PersonPin style={classes.userIcon} />
-          <div style={classes.fieldsContainer}>
-            <FormControl style={classes.root}>
-              <InputLabel style={classes.inputLabel} htmlFor="email-login">
-                <Person />
-                <span style={classes.fieldIcons}>Email</span>
-              </InputLabel>
-              <Input
-                autoComplete={false}
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#F1F3F5',
+        }}
+      >
+        <Container maxWidth="sm">
+          <Paper
+            elevation={3}
+            sx={{
+              p: 5,
+              borderRadius: 2,
+              backgroundColor: '#FFFFFF',
+            }}
+          >
+            {/* Logo and Header */}
+            <Box sx={{ textAlign: 'center', mb: 4 }}>
+              <Box
+                component="img"
+                src={logo}
+                alt="DPM Logo"
+                sx={{
+                  height: 100,
+                  mb: 3,
+                }}
+              />
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 600,
+                  color: '#A2302F',
+                  mb: 1,
+                }}
+              >
+                Vendor Portal Login
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#718096',
+                }}
+              >
+                Enter your credentials to access your account
+              </Typography>
+            </Box>
+
+            {/* Login Form */}
+            <Box component="form" onSubmit={(e) => e.preventDefault()}>
+              <TextField
+                fullWidth
+                label="Email Address"
                 name="username"
+                type="email"
                 value={username}
                 onChange={this.handleChange}
-                style={classes.inputField}
-                id="email-login"
+                onKeyPress={this.handleKeyPress}
+                autoComplete="email"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email sx={{ color: '#A2302F' }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mb: 3,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: '#F1F3F5',
+                    '&:hover fieldset': {
+                      borderColor: '#A2302F',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: '#FFFFFF',
+                      '& fieldset': {
+                        borderColor: '#A2302F',
+                        borderWidth: 2,
+                      },
+                    },
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#A2302F',
+                  },
+                }}
               />
-            </FormControl>
 
-            <FormControl style={classes.root}>
-              <InputLabel style={classes.inputLabel} htmlFor="password-login">
-                <Lock />
-                <span style={classes.fieldIcons}>Password</span>
-              </InputLabel>
-              <Input
-                autoComplete={false}
+              <TextField
+                fullWidth
+                label="Password"
                 name="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={this.handleChange}
-                type="password"
-                style={classes.inputField}
-                id="password-login"
+                onKeyPress={this.handleKeyPress}
+                autoComplete="current-password"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock sx={{ color: '#A2302F' }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={this.togglePasswordVisibility}
+                        edge="end"
+                        sx={{ color: '#718096' }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mb: 4,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: '#F1F3F5',
+                    '&:hover fieldset': {
+                      borderColor: '#A2302F',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: '#FFFFFF',
+                      '& fieldset': {
+                        borderColor: '#A2302F',
+                        borderWidth: 2,
+                      },
+                    },
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#A2302F',
+                  },
+                }}
               />
-            </FormControl>
-          </div>
-          <Button
-            disabled={buttonDisabled}
-            onClick={this.submit}
-            style={classes.submitButton}
-            size="medium"
-            variant="contained"
-            color="primary"
+
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={buttonDisabled || submitting}
+                onClick={this.submit}
+                startIcon={!submitting && <LoginOutlined />}
+                sx={{
+                  py: 1.5,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  backgroundColor: '#A2302F',
+                  color: '#FFFFFF',
+                  borderRadius: 1,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    backgroundColor: '#8B2826',
+                    boxShadow: '0 4px 12px rgba(162, 48, 47, 0.3)',
+                  },
+                  '&:disabled': {
+                    backgroundColor: '#CFCECA',
+                    color: '#A09D96',
+                  },
+                }}
+              >
+                {submitting ? (
+                  <CircularProgress size={24} sx={{ color: '#FFFFFF' }} />
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </Box>
+          </Paper>
+
+          {/* Footer Text */}
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: 'center',
+              mt: 3,
+              color: '#718096',
+            }}
           >
-            {" "}
-            {submitting ? (
-              <CircularProgress size={20} color="white" />
-            ) : (
-              "Login"
-            )}{" "}
-          </Button>
-        </Grid>
-      </Container>
+            © 2024 DPM Vendor Portal. All rights reserved.
+          </Typography>
+        </Container>
+      </Box>
     );
   }
 }
