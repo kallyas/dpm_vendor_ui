@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Routes as RouterRoutes, Navigate, useLoc
 import {ToastContainer} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import {Provider} from "react-redux"
+import {Box} from "@mui/material"
 import "./App.css"
 import store from "./redux/store"
 import LoginPage from "./components/login/LoginPage"
@@ -30,20 +31,27 @@ function AppContent() {
   return (
     <>
       {showSideNav && <SideNav />}
-      <RouterRoutes>
-        <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
-        <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
-        <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
-        <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
-        <Route path="/users" element={<Staff />} />
-        <Route path="/routes/:id" element={<SingleRoute />} />
-        <Route path="/trip/:id" element={<GetTickets />} />
-        <Route path="/transactions" element={<GetTransactions />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
-      </RouterRoutes>
+      <Box 
+        sx={{
+          marginLeft: showSideNav ? { xs: 0, md: '80px' } : 0,
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
+        <RouterRoutes>
+          <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
+          <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
+          <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
+          <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
+          <Route path="/users" element={<Staff />} />
+          <Route path="/routes/:id" element={<SingleRoute />} />
+          <Route path="/trip/:id" element={<GetTickets />} />
+          <Route path="/transactions" element={<GetTransactions />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </RouterRoutes>
+      </Box>
     </>
   );
 }

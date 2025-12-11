@@ -121,7 +121,7 @@ export default function SharedTable(props) {
             </ContentLoader>
           ) : (
             <TableBody>
-              {tableBody.slice((page - 1) * 7, page * 7).map((row) => (
+              {tableBody && tableBody.slice((page - 1) * 7, page * 7).map((row) => (
                 <TableRow 
                   key={row.id}
                   sx={{
@@ -150,7 +150,7 @@ export default function SharedTable(props) {
         </Table>
       </TableContainer>
       <PaginationControlled
-        tripsLenght={tableBody.length}
+        tripsLenght={tableBody ? tableBody.length : 0}
         page={page}
         onChange={handleChangePage}
       />
