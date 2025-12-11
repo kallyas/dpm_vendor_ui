@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import {Container, Grid, Tabs} from "@mui/material"
-import {getSingleTrip} from "../../redux/actions/getTripsAction"
+import {getSingleTrip} from "../../redux/slices/tripsSlice"
 import {connect} from "react-redux"
 import {toast} from "react-toastify"
 import Tab from "@mui/material/Tab"
@@ -11,7 +11,7 @@ import {
   MoreVert,
   ArrowRight,
 } from "@mui/icons-material"
-import {Redirect} from "react-router"
+import {Navigate} from "react-router-dom"
 
 class SingleTrip extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ class SingleTrip extends Component {
     const {fetching, trips, tabNo, tripsHeaders, busesHeaders} = this.state
     const accessToken = localStorage.getItem("DPMAccessToken")
     const refreshToken = localStorage.getItem("DPMRefreshToken")
-    if (!accessToken || !refreshToken) return <Redirect to="/login" />
+    if (!accessToken || !refreshToken) return <Navigate to="/login" replace />
     return (
       <Container style={{paddingTop: "50px"}} maxWidth={false}>
         <Grid
