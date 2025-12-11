@@ -11,7 +11,7 @@ import {
   MoreVert,
   ArrowRight,
 } from "@mui/icons-material"
-import {Navigate} from "react-router-dom"
+import {Navigate, useParams} from "react-router-dom"
 
 class SingleTrip extends Component {
   constructor(props) {
@@ -38,8 +38,9 @@ class SingleTrip extends Component {
     this.setState({tabNo: newValue})
   }
   componentDidMount() {
-    const {getSingleTrip, match} = this.props
-    getSingleTrip(match.params.id)
+    const {getSingleTrip} = this.props
+    const {id} = this.props.params
+    getSingleTrip(id)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -191,4 +192,10 @@ const mapDispatchToProps = {
   getSingleTrip,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleTrip)
+// Wrapper to inject useParams for React Router v6
+function SingleRouteWrapper(props) {
+  const params = useParams()
+  return <SingleTrip {...props} params={params} />
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SingleRouteWrapper)
