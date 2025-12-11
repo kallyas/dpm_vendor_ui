@@ -6,10 +6,10 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Grid,
-  Input,
-  StepButton,
-  TablePagination,
+  Box,
+  TextField,
+  IconButton,
+  TableSortLabel,
 } from "@mui/material"
 import ContentLoader from "react-content-loader"
 import {Edit, Add} from "@mui/icons-material"
@@ -37,65 +37,72 @@ export default function SharedTable(props) {
 
   return (
     <>
-      <Grid sx={{
-        width: "90%",
-        margin: "5px auto auto 5%",
-        display: "inline-flex",
+      <Box sx={{
+        width: "100%",
+        mb: 3,
+        display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        gap: 2,
       }}>
         {search && (
-          <Input
+          <TextField
             placeholder="Search"
-            disableUnderline
-            style={{
-              padding: "0px 20px",
-              width: "30%",
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #A2302F",
-              borderRadius: "50px",
+            variant="outlined"
+            size="small"
+            sx={{
+              width: "300px",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
             }}
           />
         )}
 
         {!hideDock && (
-          <Grid>
-            <StepButton
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <IconButton
               onClick={toggleUpdate}
-              style={{
-                marginLeft: "10px",
-                cursor: "pointer",
-                borderRadius: "50%",
-                width: "50px",
+              disabled={!oneChecked}
+              sx={{
+                color: oneChecked ? "#A2302F" : "action.disabled",
+                transition: "all 0.3s",
+                "&:hover": {
+                  backgroundColor: "rgba(162, 48, 47, 0.1)",
+                },
               }}
+              title="Edit"
             >
-              <Edit
-                style={{color: oneChecked ? "#000" : "rgba(0, 0, 0, 0.54)"}}
-              />
-            </StepButton>
-            <StepButton
+              <Edit />
+            </IconButton>
+            <IconButton
               onClick={toggleAdd}
-              style={{
-                marginLeft: "10px",
-                cursor: "pointer",
-                borderRadius: "50%",
-                width: "50px",
+              sx={{
+                color: "#A2302F",
+                transition: "all 0.3s",
+                "&:hover": {
+                  backgroundColor: "rgba(162, 48, 47, 0.1)",
+                },
               }}
+              title="Add New"
             >
-              <Add style={{color: "#000"}} />
-            </StepButton>
-          </Grid>
+              <Add />
+            </IconButton>
+          </Box>
         )}
-      </Grid>
-      <TableContainer sx={{
-        width: "90%",
-        margin: "5px auto auto 5%",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }} component={Paper}>
+      </Box>
+      <TableContainer component={Paper} sx={{
+        borderRadius: "12px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+      }}>
         <Table sx={{ width: "100%" }} aria-label="customized table">
-          <TableHead>
+          <TableHead sx={{
+            backgroundColor: "#A2302F",
+            "& th": {
+              color: "white",
+              fontWeight: 600,
+            },
+          }}>
             <TableRow>
               {MakeRow({
                 record: headers,
@@ -115,15 +122,20 @@ export default function SharedTable(props) {
           ) : (
             <TableBody>
               {tableBody.slice((page - 1) * 7, page * 7).map((row) => (
-                <TableRow sx={{
-                  "&:nth-of-type(odd)": {
-                    backgroundColor: (theme) => theme.palette.action.hover,
-                  },
-                  "&:hover": {
-                    backgroundColor: "#FFEFEF",
-                    transition: "background-color 0.5s",
-                  },
-                }}>
+                <TableRow 
+                  key={row.id}
+                  sx={{
+                    "&:nth-of-type(odd)": {
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(162, 48, 47, 0.08)",
+                      transition: "background-color 0.2s",
+                    },
+                    "& td": {
+                      borderColor: "rgba(224, 224, 224, 0.5)",
+                    },
+                  }}>
                   {MakeRow({
                     record: headers,
                     classes: { check: { margin: "0px 20px 4px 10px" } },
