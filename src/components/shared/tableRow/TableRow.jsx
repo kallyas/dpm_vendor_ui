@@ -26,7 +26,7 @@ export const MakeRow = function ({
             <Link
               style={{
                 textDecoration: "none",
-                color: "#A2302F",
+                color: "inherit",
               }}
               to={`/${path}/${id}`}
             >
@@ -36,7 +36,7 @@ export const MakeRow = function ({
                 id={id}
                 size="medium"
                 className={classes.check}
-                style={{color: "#A2302F"}}
+                sx={{ color: "primary.main" }}
               />
               {content ? content[element.key] : element.label}
             </Link>
@@ -52,10 +52,10 @@ export const MakeRow = function ({
               id={id}
               size="medium"
               className={classes.check}
-              style={{color: "#A2302F"}}
+              sx={{ color: "primary.main" }}
             />
             <Link
-              style={{textDecoration: "none", color: "#A2302F"}}
+              style={{textDecoration: "none", color: "inherit"}}
               to={`/${path}/${id}`}
             >
               {content ? content[element.key] : element.label}
@@ -63,28 +63,13 @@ export const MakeRow = function ({
           </StyledTableCell>
         )
       }
-      // else {
-      //   TableRecord.push(
-      //     <StyledTableCell key={index} align="left">
-      //       <Checkbox
-      //         onChange={handleCheck}
-      //         checked={checked}
-      //         id={id}
-      //         size="medium"
-      //         className={classes.check}
-      //         style={{color: "#A2302F"}}
-      //       />
-      //       {content ? content[element.key] : element.label}
-      //     </StyledTableCell>
-      //   )
-      // }
     } else {
       TableRecord.push(
         <StyledTableCell key={index} align="left">
           <Link
             style={{
               textDecoration: "none",
-              color: "#A2302F",
+              color: "inherit",
             }}
             to={`/${path}/${id}`}
           >
