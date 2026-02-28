@@ -19,7 +19,7 @@ const Buses = () => {
   
   const [formData, setFormData] = useState({
     number_plate: '',
-    capacity: ''
+    capacity: null
   });
 
   const headers = [
@@ -34,7 +34,7 @@ const Buses = () => {
 
   const toggleAdd = () => {
     setShowAdd((prev) => !prev);
-    setFormData({ number_plate: '', capacity: '' });
+    setFormData({ number_plate: '', capacity: null });
     setSubmitDisabled(true);
     setAddError("");
   };
