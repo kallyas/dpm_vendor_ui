@@ -1,246 +1,159 @@
-import React, { Component } from "react";
+import { useState } from "react";
 import { Container, Box, Typography } from "@mui/material";
 import BusesTable from "../shared/sharedTable/SharedTable";
-import { getVehicles } from "../../redux/slices/vehiclesSlice";
-import { connect } from "react-redux";
-import { toast } from "react-toastify";
+import { useGetVehiclesQuery, useAddVehicleMutation, useUpdateVehicleMutation } from "../../redux/api/apiSlice";
 import AddBus from "./AddBus";
-import {
-  addVehicle,
-  updateVehicle,
-} from "../../redux/actions/addVehicleAction";
 import { createVehiclePayloadValidator } from "./validator";
-// import {} from '@mui/icons-material';
 
-class Buses extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fetching: "148%",
-      buses: [],
-      newVehicle: {},
-      showAdd: false,
-      showUpdate: false,
-      submitDisabled: true,
-      addError: "",
-      updateError: "",
-      submitting: false,
-      headers: [
-        { label: "PlateNo", key: "number_plate" },
-        { label: "Capacity", key: "capacity" },
-        { label: "Trips", key: "trips" },
-      ],
-    };
-  }
+const Buses = () => {
+  const { data: buses = [], isLoading: fetching } = useGetVehiclesQuery();
+  const [addVehicle] = useAddVehicleMutation();
+  const [updateVehicle] = useUpdateVehicleMutation();
+  
+  const [showAdd, setShowAdd] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [addError, setAddError] = useState("");
+  const [updateError, setUpdateError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    number_plate: '',
+    capacity: ''
+  });
 
-  componentDidMount() {
-    const { getVehicles } = this.props;
-    getVehicles();
-  }
+  const headers = [
+    { label: "PlateNo", key: "number_plate" },
+    { label: "Capacity", key: "capacity" },
+    { label: "Trips", key: "trips" },
+  ];
 
-  componentWillReceiveProps(nextProps) {
-    const {
-      vehicles: { error, data },
-    } = nextProps;
-    if (data) {
-      this.setState({ buses: data, fetching: false });
-    } else if (error) {
-      this.setState({ fetching: false });
-      toast.error(error.message);
-    } else {
-      this.setState({ fetching: false });
-    }
-  }
-
-  handleCheck = ({ target }) => {
+  const handleCheck = ({ target }) => {
     const { checked, id } = target;
-    const { buses } = this.state;
-    const checkedBuses = buses.map((bus) => {
-      const checkedBus = { ...bus };
-      if (id === "header") {
-        checkedBus.checked = checked;
-      }
-      if (checkedBus.id == id) {
-        checkedBus.checked = checked;
-      }
-      return checkedBus;
-    });
-
-    this.setState({ buses: checkedBuses });
   };
 
-  toggleAdd = () => {
-    const { showAdd } = this.state;
-    this.setState({ showAdd: !showAdd });
+  const toggleAdd = () => {
+    setShowAdd((prev) => !prev);
+    setFormData({ number_plate: '', capacity: '' });
+    setSubmitDisabled(true);
+    setAddError("");
   };
 
-  toggleUpdate = () => {
-    const { showUpdate } = this.state;
-    this.setState({ showUpdate: !showUpdate });
+  const toggleUpdate = () => {
+    setShowUpdate((prev) => !prev);
+    setUpdateError("");
   };
 
-  handleChange = async ({ target }) => {
-    const { name, value } = target;
-    const { number_plate, capacity } = this.state;
-    const error = await createVehiclePayloadValidator({
-      number_plate,
-      capacity,
-      [name]: value,
-    });
-    this.setState({
-      [name]: value,
-      submitDisabled: error !== undefined ? true : false,
-      addError: error,
-    });
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    const newFormData = { ...formData, [name]: value };
+    setFormData(newFormData);
+    
+    const validationError = await createVehiclePayloadValidator(newFormData);
+    setSubmitDisabled(!!validationError);
+    setAddError(validationError);
   };
 
-  handleUpdateChange = async ({ target }) => {
-    const { buses } = this.state;
-    const { name, value } = target;
-    let busIndex;
-    const updatedvehicles = buses.map((bus, index) => {
-      const updatedBus = { ...bus };
-      if (updatedBus.checked === true) {
-        busIndex = index;
-        updatedBus[name] = value;
-      }
-      return updatedBus;
-    });
-    const error = await createVehiclePayloadValidator({
-      number_plate: updatedvehicles[busIndex].number_plate,
-      capacity: updatedvehicles[busIndex].capacity,
-      [name]: value,
-    });
-    this.setState({
-      buses: updatedvehicles,
-      submitDisabled: error !== undefined ? true : false,
-      updateError: error,
-    });
+  const handleUpdateChange = async (e) => {
+    const { name, value } = e.target;
   };
 
-  handleSubmit = async () => {
-    const { number_plate, capacity } = this.state;
-    this.setState({ submitting: true });
-    const result = await addVehicle({ number_plate, capacity });
-    if (result) {
-      this.toggleAdd();
-      this.props.getVehicles();
+  const handleSubmit = async () => {
+    const { number_plate, capacity } = formData;
+    setSubmitting(true);
+    try {
+      await addVehicle({ number_plate, capacity }).unwrap();
+      toggleAdd();
+    } catch (err) {
+      setAddError(err?.data?.message || 'Failed to add vehicle');
     }
-    this.setState({ submitting: false });
+    setSubmitting(false);
   };
 
-  handleSubmitUpdate = async () => {
-    const { buses } = this.state;
+  const handleSubmitUpdate = async () => {
     const bus = buses.filter((bus) => bus.checked === true);
     const { id, number_plate, capacity } = bus[0];
-    this.setState({ submitting: true });
-    const result = await updateVehicle({ id, number_plate, capacity });
-    if (result) {
-      this.toggleUpdate();
-      this.props.getVehicles();
+    setSubmitting(true);
+    try {
+      await updateVehicle({ id, number_plate, capacity }).unwrap();
+      toggleUpdate();
+    } catch (err) {
+      setUpdateError(err?.data?.message || 'Failed to update vehicle');
     }
-    this.setState({ submitting: false });
+    setSubmitting(false);
   };
 
-  render() {
-    const {
-      headers,
-      submitting,
-      buses,
-      showAdd,
-      showUpdate,
-      number_plate,
-      capacity,
-      submitDisabled,
-      addError,
-      updateError,
-      fetching,
-    } = this.state;
-    // make trips in each bus the length of the trips array
-    const busesWithTripCount = buses.map((bus) => ({
-        ...bus,
-        trips: bus?.trips?.length || 0
-    }));
-    const allChecked = busesWithTripCount.every((bus) => bus.checked === true);
-    const checkedBuses = busesWithTripCount.filter((bus) => bus.checked === true);
-    const { capacity: busCapacity, number_plate: numberPlate } = checkedBuses[0]
-      ? checkedBuses[0]
-      : [{}];
-    const oneChecked = checkedBuses.length === 1;
-    return (
-      <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography 
-            variant="h4" 
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              color: "#A2302F",
-              mb: 1,
-            }}
-          >
-            Vehicles Management
-          </Typography>
-          <Typography 
-            variant="body1" 
-            sx={{
-              color: "#666",
-            }}
-          >
-            Manage and monitor all vehicles in your fleet.
-          </Typography>
-        </Box>
-        {showAdd ? (
-          <AddBus
-            submitting={submitting}
-            error={addError}
-            submitDisabled={submitDisabled}
-            title="Add New Vehicle"
-            number_plate={number_plate}
-            capacity={capacity}
-            handleChange={this.handleChange}
-            handleSubmit={this.handleSubmit}
-            toggleAdd={this.toggleAdd}
-          />
-        ) : (
-          ""
-        )}
-        {showUpdate && oneChecked ? (
-          <AddBus
-            submitting={submitting}
-            error={updateError}
-            title="Update Vehicle"
-            number_plate={numberPlate}
-            capacity={busCapacity}
-            handleChange={this.handleUpdateChange}
-            handleSubmit={this.handleSubmitUpdate}
-            toggleAdd={this.toggleUpdate}
-          />
-        ) : (
-          ""
-        )}
+  const busesWithTripCount = buses.map((bus) => ({
+    ...bus,
+    trips: bus?.trips?.length || 0
+  }));
+  
+  const allChecked = false;
+  const checkedBuses = busesWithTripCount.filter((bus) => bus.checked === true);
+  const { capacity: busCapacity, number_plate: numberPlate } = checkedBuses[0] || {};
+  const oneChecked = checkedBuses.length === 1;
 
-        <BusesTable
-          fetching={fetching}
-          oneChecked={oneChecked}
-          toggleUpdate={oneChecked && this.toggleUpdate}
-          toggleAdd={this.toggleAdd}
-          handleCheck={this.handleCheck}
-          tableBody={busesWithTripCount}
-          headers={headers}
-          allChecked={allChecked}
+  return (
+    <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: 700,
+            color: "#A2302F",
+            mb: 1,
+          }}
+        >
+          Vehicles Management
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#666",
+          }}
+        >
+          Manage and monitor all vehicles in your fleet.
+        </Typography>
+      </Box>
+      {showAdd ? (
+        <AddBus
+          submitting={submitting}
+          error={addError}
+          submitDisabled={submitDisabled}
+          title="Add New Vehicle"
+          number_plate={formData.number_plate}
+          capacity={formData.capacity}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          toggleAdd={toggleAdd}
         />
-      </Container>
-    );
-  }
-}
+      ) : null}
+      {showUpdate && oneChecked ? (
+        <AddBus
+          submitting={submitting}
+          error={updateError}
+          title="Update Vehicle"
+          number_plate={numberPlate}
+          capacity={busCapacity}
+          handleChange={handleUpdateChange}
+          handleSubmit={handleSubmitUpdate}
+          toggleAdd={toggleUpdate}
+        />
+      ) : null}
 
-const mapStateToProps = ({ vehicles }) => {
-  return { vehicles };
+      <BusesTable
+        fetching={fetching}
+        oneChecked={oneChecked}
+        toggleUpdate={oneChecked && toggleUpdate}
+        toggleAdd={toggleAdd}
+        handleCheck={handleCheck}
+        tableBody={busesWithTripCount}
+        headers={headers}
+        allChecked={allChecked}
+      />
+    </Container>
+  );
 };
 
-const mapDispatchToprops = {
-  getVehicles,
-};
-
-export default connect(mapStateToProps, mapDispatchToprops)(Buses);
+export default Buses;
