@@ -1,26 +1,24 @@
-import React, {useState, useEffect, useCallback, useMemo} from "react"
-import {Container, Box, Typography} from "@mui/material"
+import { useState, useCallback, useMemo } from "react"
+import { Container, Box, Typography } from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
-import {getTrips} from "../../redux/slices/tripsSlice"
-import {useSelector, useDispatch} from "react-redux"
-import {toast} from "react-toastify"
+import { useGetTripsQuery } from "../../redux/api/apiSlice"
 import AddTrip from "./AddTrip"
 import moment from "moment"
-import {addTrip, updateTrip} from "../../redux/actions/addTripAction"
-import {validate} from "./validateTrip"
+import { addTrip, updateTrip } from "../../redux/actions/addTripAction"
+import { validate } from "./validateTrip"
 
 const headers = [
-  {label: "Vehicle", key: "number_plate"},
-  {label: "From", key: "start_point"},
-  {label: "To", key: "destination"},
-  {label: "Fare (UGX)", key: "tp_fare"},
-  {label: "Travel Date", key: "date"},
-  {label: "Time", key: "time"},
+  { label: "Vehicle", key: "number_plate" },
+  { label: "From", key: "start_point" },
+  { label: "To", key: "destination" },
+  { label: "Fare (UGX)", key: "tp_fare" },
+  { label: "Travel Date", key: "date" },
+  { label: "Time", key: "time" },
 ]
 
 const Trips = () => {
-  const dispatch = useDispatch()
-  const tripsState = useSelector((state) => state.trips)
+  const { data: trips = [], isLoading } = useGetTripsQuery()
+  
   const [showAdd, setShowAdd] = useState(false)
   const [showUpdate, setShowUpdate] = useState(false)
   const [localTrips, setLocalTrips] = useState([])
@@ -34,20 +32,12 @@ const Trips = () => {
     setoff_time: "",
   })
 
-  useEffect(() => {
-    dispatch(getTrips())
-  }, [dispatch])
+  useMemo(() => {
+    setLocalTrips(trips)
+  }, [trips])
 
-  useEffect(() => {
-    if (tripsState.error) {
-      toast.error(tripsState.error.message)
-    } else if (tripsState.data) {
-      setLocalTrips(tripsState.data)
-    }
-  }, [tripsState])
-
-  const handleCheck = useCallback(({target}) => {
-    const {checked, id} = target
+  const handleCheck = useCallback(({ target }) => {
+    const { checked, id } = target
     setLocalTrips((prevTrips) =>
       prevTrips.map((trip) => ({
         ...trip,
@@ -59,7 +49,7 @@ const Trips = () => {
   const toggleAdd = useCallback(() => {
     setShowAdd((prev) => !prev)
     setShowUpdate(false)
-    setFormData({route_id: "", vehicle_id: "", tp_fare: "", setoff_time: ""})
+    setFormData({ route_id: "", vehicle_id: "", tp_fare: "", setoff_time: "" })
   }, [])
 
   const toggleUpdate = useCallback(() => {
@@ -67,28 +57,28 @@ const Trips = () => {
     setShowAdd(false)
   }, [])
 
-  const handleChange = async ({target}) => {
-    const {name, value} = target
-    const error = await validate({...formData, [name]: value})
-    setFormData((prev) => ({...prev, [name]: value}))
+  const handleChange = async ({ target }) => {
+    const { name, value } = target
+    const error = await validate({ ...formData, [name]: value })
+    setFormData((prev) => ({ ...prev, [name]: value }))
     setSubmitDisabled(error !== undefined)
     setAddError(error)
   }
 
-  const handleUpdateChange = useCallback(async ({target}) => {
-    const {name, value} = target
+  const handleUpdateChange = useCallback(async ({ target }) => {
+    const { name, value } = target
     setLocalTrips((prevTrips) =>
       prevTrips.map((trip) =>
-        trip.checked ? {...trip, [name]: value} : trip
+        trip.checked ? { ...trip, [name]: value } : trip
       )
     )
-    const error = await validate({...formData, [name]: value})
+    const error = await validate({ ...formData, [name]: value })
     setSubmitDisabled(error !== undefined)
     setAddError(error)
   }, [formData])
 
   const handleSubmit = async () => {
-    const {setoff_time, tp_fare, route_id, vehicle_id} = formData
+    const { setoff_time, tp_fare, route_id, vehicle_id } = formData
     const dateTime = moment(setoff_time, "YYYY-MM-DDTHH:mm").format(
       "DD/MM/YYYY HH:mm:ss"
     )
@@ -102,7 +92,6 @@ const Trips = () => {
     setSubmitting(false)
     if (result === true) {
       toggleAdd()
-      dispatch(getTrips())
     }
   }
 
@@ -110,7 +99,7 @@ const Trips = () => {
     const checkedTrip = localTrips.find((trip) => trip.checked === true)
     if (!checkedTrip) return
     
-    const {id, setoff_time, tp_fare, route_id, vehicle_id} = checkedTrip
+    const { id, setoff_time, tp_fare, route_id, vehicle_id } = checkedTrip
     const dateTime = moment(setoff_time, "YYYY-MM-DDTHH:mm").format(
       "DD/MM/YYYY HH:mm:ss"
     )
@@ -125,7 +114,6 @@ const Trips = () => {
     setSubmitting(false)
     if (result) {
       toggleUpdate()
-      dispatch(getTrips())
     }
   }
 
@@ -138,7 +126,7 @@ const Trips = () => {
   const currentTrip = checkedTrips[0] || {}
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+    <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
       <Box sx={{ mb: 4 }}>
         <Typography 
           variant="h4" 
@@ -194,7 +182,7 @@ const Trips = () => {
       )}
 
       <SharedTable
-        fetching={tripsState.loading ? "100%" : "false"}
+        fetching={isLoading}
         oneChecked={oneChecked}
         toggleUpdate={oneChecked && toggleUpdate}
         toggleAdd={toggleAdd}
