@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useCallback} from "react"
+import React, { useState, useMemo, useCallback } from "react"
 import {
   Table,
   TableBody,
@@ -16,9 +16,9 @@ import {
   TableCell,
 } from "@mui/material"
 import ContentLoader from "react-content-loader"
-import {Edit, Add, Search, Clear} from "@mui/icons-material"
-import {MakeRow} from "../tableRow/TableRow"
-import {TableSkeleton} from "./TableSkeleton"
+import { Edit, Add, Search, Clear } from "@mui/icons-material"
+import { MakeRow } from "../tableRow/TableRow"
+import { TableSkeleton } from "./TableSkeleton"
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25]
 
@@ -34,11 +34,13 @@ export default function SharedTable(props) {
     oneChecked,
     fetching,
   } = props
-  
+
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchColumn, setSearchColumn] = useState("all")
+
+  const isLoading = fetching === true || fetching === 'true'
 
   const handleChangePage = useCallback((event, newPage) => {
     setPage(newPage)
@@ -61,7 +63,7 @@ export default function SharedTable(props) {
 
   const filteredData = useMemo(() => {
     if (!tableBody || !searchQuery) return tableBody || []
-    
+
     const query = searchQuery.toLowerCase()
     return tableBody.filter((row) => {
       if (searchColumn === "all") {
@@ -123,7 +125,7 @@ export default function SharedTable(props) {
             }}
           />
           {filteredData.length > 0 && (
-            <Chip 
+            <Chip
               label={`${filteredData.length} ${filteredData.length === 1 ? 'record' : 'records'}`}
               size="small"
               sx={{ bgcolor: "primary.light", color: "white" }}
@@ -166,9 +168,9 @@ export default function SharedTable(props) {
           </Box>
         )}
       </Box>
-      
-      <TableContainer 
-        component={Paper} 
+
+      <TableContainer
+        component={Paper}
         sx={{
           borderRadius: "16px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
@@ -198,8 +200,8 @@ export default function SharedTable(props) {
                 })}
               </TableRow>
             </TableHead>
-            {fetching ? (
-              <ContentLoader style={{width: "100%", padding: "0px", height: "360"}}>
+            {isLoading ? (
+              <ContentLoader style={{ width: "100%", padding: "0px", height: "360" }}>
                 <TableSkeleton />
               </ContentLoader>
             ) : paginatedData.length === 0 ? (
@@ -220,7 +222,7 @@ export default function SharedTable(props) {
             ) : (
               <TableBody>
                 {paginatedData.map((row, index) => (
-                  <TableRow 
+                  <TableRow
                     key={row.id}
                     sx={{
                       bgcolor: index % 2 === 0 ? "background.paper" : "grey.50",
@@ -250,7 +252,7 @@ export default function SharedTable(props) {
           </Table>
         </Box>
       </TableContainer>
-      
+
       <TablePagination
         rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
         component="div"
