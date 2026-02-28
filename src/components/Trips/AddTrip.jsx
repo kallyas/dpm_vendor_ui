@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Paper,
   Grid,
@@ -11,60 +11,44 @@ import {
   Tooltip,
   CircularProgress,
 } from "@mui/material";
-import { connect } from "react-redux";
-import { getVehicles } from "../../redux/slices/vehiclesSlice";
-import { getRoutes } from "../../redux/slices/routesSlice";
+import { useGetVehiclesQuery, useGetRoutesQuery } from "../../redux/api/apiSlice";
 import { toast } from "react-toastify";
 
-const AddTrip = (props) => {
-  const [vehicles, setVehicles] = useState([]);
-  const [routes, setRoutes] = useState([]);
+const AddTrip = ({
+  toggleAdd,
+  route_id,
+  vehicle_id,
+  tp_fare,
+  setoff_time,
+  handleChange,
+  handleSubmit,
+  title,
+  error,
+  submitDisabled,
+  submitting,
+}) => {
+  const { data: vehicles = [], error: vehiclesError } = useGetVehiclesQuery();
+  const { data: routes = [], error: routesError } = useGetRoutesQuery();
+  
+  const [filteredRoutes, setFilteredRoutes] = useState([]);
 
   useEffect(() => {
-    const { getRoutes, getVehicles } = props;
-    getVehicles();
-    getRoutes();
-  }, []);
-
-  useEffect(() => {
-    const {
-      vehicles: { data, error },
-    } = props;
-    if (data) {
-      setVehicles(data);
-    } else if (error) {
-      toast.error(error.message);
+    if (vehiclesError) {
+      toast.error(vehiclesError.message);
     }
-  }, [props.vehicles]);
+    if (routesError) {
+      toast.error(routesError.message);
+    }
+  }, [vehiclesError, routesError]);
 
   useEffect(() => {
-    const {
-      routes: { data, error },
-    } = props;
-    if (data) {
-      const operationArea = localStorage.getItem("OperationArea");
-      const filteredRoutes = data.filter(
-        (route) => route?.route_region?.toLowerCase() === operationArea?.toLowerCase()
-      );
-      setRoutes(filteredRoutes);
-    } else if (error) {
-      toast.error(error.message);
-    }
-  }, [props.routes]);
+    const operationArea = localStorage.getItem("OperationArea");
+    const filtered = routes.filter(
+      (route) => route?.route_region?.toLowerCase() === operationArea?.toLowerCase()
+    );
+    setFilteredRoutes(filtered);
+  }, [routes]);
 
-  const {
-    toggleAdd,
-    route_id,
-    vehicle_id,
-    tp_fare,
-    setoff_time,
-    handleChange,
-    handleSubmit,
-    title,
-    error,
-    submitDisabled,
-    submitting,
-  } = props;
   return (
     <Paper
       style={{
@@ -89,7 +73,7 @@ const AddTrip = (props) => {
           margin: "10% auto 0px auto",
         }}
       >
-        <Tooltip title={error} open={error && true}>
+        <Tooltip title={error || ''} open={!!error}>
           <Grid
             style={{
               color: "#A2302F",
@@ -120,9 +104,9 @@ const AddTrip = (props) => {
               value={route_id}
               name="route_id"
             >
-              {routes &&
-                routes.map((route) => (
-                  <MenuItem value={route.id}>{route.route_code}</MenuItem>
+              {filteredRoutes &&
+                filteredRoutes.map((route) => (
+                  <MenuItem key={route.id} value={route.id}>{route.route_code}</MenuItem>
                 ))}
             </Select>
           </FormControl>
@@ -158,7 +142,7 @@ const AddTrip = (props) => {
             >
               {vehicles &&
                 vehicles.map((vehicle) => (
-                  <MenuItem value={vehicle.id}>{vehicle.number_plate}</MenuItem>
+                  <MenuItem key={vehicle.id} value={vehicle.id}>{vehicle.number_plate}</MenuItem>
                 ))}
             </Select>
           </FormControl>
@@ -213,13 +197,4 @@ const AddTrip = (props) => {
   );
 };
 
-const mapStateToProps = ({ routes, vehicles }) => {
-  return { vehicles, routes };
-};
-
-const mapDispatchToProps = {
-  getRoutes,
-  getVehicles,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddTrip);
+export default AddTrip;
