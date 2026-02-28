@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import { useEffect } from "react";
 
-class Logout extends Component {
-  componentDidMount() {
+const Logout = () => {
+  useEffect(() => {
     localStorage.removeItem("DPMAccessToken");
     localStorage.removeItem("DPMRefreshToken");
     window.location.assign("/login");
-  }
-  render() {
-    return <></>;
-  }
-}
+  }, []);
+
+  return null;
+};
+
 export default Logout;
