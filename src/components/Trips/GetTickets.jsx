@@ -70,8 +70,9 @@ const Get = (props) => {
               component="h1"
               sx={{
                 fontWeight: 700,
-                color: "#A2302F",
+                color: "primary.main",
                 mb: 1,
+                textAlign: "center",
               }}
             >
               {noTickets ? "No Tickets Available" : "Trip Tickets"}
@@ -79,7 +80,8 @@ const Get = (props) => {
             <Typography 
               variant="body1" 
               sx={{
-                color: "#666",
+                color: "text.secondary",
+                textAlign: "center",
               }}
             >
               {noTickets ? "There are no tickets booked for this trip yet." : "View all booked tickets for this trip."}
