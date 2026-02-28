@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Container, Box, Typography } from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
 import { useGetTripsQuery } from "../../redux/api/apiSlice"
@@ -32,7 +32,7 @@ const Trips = () => {
     setoff_time: '',
   })
 
-  useMemo(() => {
+  useEffect(() => {
     setLocalTrips(trips)
   }, [trips])
 
