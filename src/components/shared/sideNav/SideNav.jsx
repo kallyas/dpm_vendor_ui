@@ -1,141 +1,178 @@
 import React, {useState} from "react"
+import {useNavigate, useLocation} from "react-router-dom"
 import {
   Paper,
-  Grid,
-  StepButton,
-  Link,
-  Tooltip,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Drawer,
+  useMediaQuery,
+  useTheme,
+  Box,
+  Typography,
 } from "@mui/material"
 import {
   Dashboard,
   DirectionsBus,
   CompareArrows,
-  Apps,
   CardTravel,
   People,
   ExitToApp,
+  Menu as MenuIcon,
+  MonetizationOn as MonetizationOnIcon,
+  ChevronLeft,
 } from "@mui/icons-material"
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn"
-import SideIconsMenu from "./SideIconsMenu"
 
-export const SideNav = (props) => {
-  const [hidden, setHide] = useState(true)
+const navItems = [
+  { text: "Dashboard", icon: <Dashboard />, path: "/" },
+  { text: "Buses", icon: <DirectionsBus />, path: "/vehicles" },
+  { text: "Trips", icon: <CardTravel />, path: "/trips" },
+  { text: "Routes", icon: <CompareArrows />, path: "/routes" },
+  { text: "Staff", icon: <People />, path: "/users" },
+  { text: "Transactions", icon: <MonetizationOnIcon />, path: "/transactions" },
+]
 
-  const toggleNav = () => {
-    setHide(!hidden)
+const DRAWER_WIDTH = 260
+
+export const SideNav = () => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
   }
 
-  return (
-    <Paper
-      style={
-        hidden
-          ? {left: "-18%", transition: "left 0.5s"}
-          : {left: "0px", transition: "left 0.5s"}
-      }
-      sx={{
-        width: "15%",
-        height: "100vh",
-        background:
-          "linear-gradient(180deg, #FFFFFF 100%, rgba(255, 255, 255, 0) 100%)",
-        display: "inline-flex",
-        justifyContent: "center",
-        position: "fixed",
-        zIndex: 100,
-      }}
-      elevation={1}
-    >
-      <StepButton
-        style={{
-          position: "fixed",
-          cursor: "pointer",
-          borderRadius: "50%",
-          left: "0px",
-          width: "60px",
-          top: "10px",
-          fontWeight: "bold",
-          background:
-            "linear-gradient(180deg, #FFFFFF 100%, rgba(255, 255, 255, 0) 100%)",
+  const handleNavigation = (path) => {
+    navigate(path)
+    if (isMobile) {
+      setMobileOpen(false)
+    }
+  }
+
+  const drawer = (
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 3,
+          borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Tooltip title="Menu">
-          <Apps
-            onClick={toggleNav}
-            style={{fontSize: "40px", color: "#A2302F"}}
-          />
-        </Tooltip>
-      </StepButton>
-      {hidden ? <SideIconsMenu /> : ""}
-      <Grid
-        style={{
-          width: "100%",
-          position: "relative",
-          top: "50px",
-          display: hidden ? "none" : "block",
-        }}
-      >
-        <img
-          style={{
+        <Box
+          component="img"
+          sx={{
+            width: 80,
+            height: 80,
             borderRadius: "50%",
-            width: "120px",
-            height: "120px",
-            margin: "auto",
-            display: "block",
+            objectFit: "cover",
+            border: `3px solid ${theme.palette.primary.main}`,
           }}
           alt="Bus operator logo"
           src="https://via.placeholder.com/150"
         />
-        <Grid
-          style={{
-            color: "#A2302F",
-            fontSize: "20px",
-            fontWeight: "500",
-            marginTop: "50px",
+      </Box>
+      <List sx={{ px: 2, py: 2, flexGrow: 1 }}>
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path
+          return (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => handleNavigation(item.path)}
+                sx={{
+                  borderRadius: 2,
+                  bgcolor: isActive ? "primary.main" : "transparent",
+                  color: isActive ? "white" : "text.primary",
+                  "&:hover": {
+                    bgcolor: isActive ? "primary.dark" : "action.hover",
+                  },
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? "white" : "primary.main",
+                    minWidth: 40,
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    fontWeight: isActive ? 600 : 400,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          )
+        })}
+      </List>
+      <List sx={{ px: 2, pb: 2 }}>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => handleNavigation("/logout")}
+            sx={{
+              borderRadius: 2,
+              "&:hover": { bgcolor: "error.light" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "error.main", minWidth: 40 }}>
+              <ExitToApp />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{ color: "error.main" }}
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  )
+
+  return (
+    <>
+      {isMobile && (
+        <IconButton
+          onClick={handleDrawerToggle}
+          sx={{
+            position: "fixed",
+            top: 16,
+            left: 16,
+            zIndex: 1200,
+            bgcolor: "white",
+            boxShadow: 1,
+            "&:hover": { bgcolor: "white" },
           }}
         >
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/">
-              <Dashboard />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Dashboard</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/vehicles">
-              <DirectionsBus />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Buses</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/trips">
-              <CardTravel />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Trips</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/routes">
-              <CompareArrows />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Routes</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/users">
-              <People />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Staff</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/transactions">
-              <MonetizationOnIcon />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Transactions</span>
-            </Link>
-          </Grid>
-          <Grid sx={{ textAlign: "left", marginBottom: "40px", paddingLeft: "30px" }}>
-            <Link href="/logout">
-              <ExitToApp />
-              <span style={{ position: "relative", top: "-4px", overflowWrap: "break-word", display: "inline" }}>Logout</span>
-            </Link>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Paper>
+          <MenuIcon />
+        </IconButton>
+      )}
+      <Drawer
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? mobileOpen : true}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+            border: "none",
+            boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </>
   )
 }
