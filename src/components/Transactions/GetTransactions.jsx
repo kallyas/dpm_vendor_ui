@@ -1,39 +1,22 @@
-import React, {useEffect, useState} from "react"
-import {getTransactions} from "../../redux/slices/transactionsSlice"
-import {connect} from "react-redux"
-import {toast} from "react-toastify"
-import {Container, Box, Typography} from "@mui/material"
+import { useGetTransactionsQuery } from "../../redux/api/apiSlice"
+import { Container, Box, Typography } from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
 
-const GetTransactions = (props) => {
-  const [transactions, setTransactions] = useState([])
-  const [fetching, setFetching] = useState("156.5%")
+const GetTransactions = () => {
+  const { data: transactions = [], isLoading: fetching } = useGetTransactionsQuery()
+  
   const headers = [
-    {label: "Phone No", key: "payer_number"},
-    {label: "Amount", key: "amount"},
-    {label: "Created Date", key: "date"},
-    {label: "Created Time", key: "bookedTime"},
-    {label: "Status", key: "status"},
+    { label: "Phone No", key: "payer_number" },
+    { label: "Amount", key: "amount" },
+    { label: "Created Date", key: "date" },
+    { label: "Created Time", key: "bookedTime" },
+    { label: "Status", key: "status" },
   ]
 
-  useEffect(() => {
-    const {getTransactions} = props
-    getTransactions()
-  }, [])
-  useEffect(() => {
-    const {transactions} = props
-    if (transactions.error) {
-      setFetching(false)
-      toast.error(transactions.error.message)
-    } else {
-      setFetching(false)
-      setTransactions(transactions.data)
-    }
-  }, [props.transactions])
   return (
     <>
       {transactions && (
-        <Container maxWidth="lg" sx={{ py: 4, px: {xs: 2, sm: 3, md: 4} }}>
+        <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
           <Box sx={{ mb: 4 }}>
             <Typography 
               variant="h4" 
@@ -60,8 +43,6 @@ const GetTransactions = (props) => {
             hideDock={true}
             tableBody={transactions}
             headers={headers}
-            // handleCheck={this.handleCheck}
-            // allChecked={allChecked}
           />
         </Container>
       )}
@@ -69,12 +50,4 @@ const GetTransactions = (props) => {
   )
 }
 
-const mapStateToProps = ({transactions}) => {
-  return {transactions}
-}
-
-const mapDispatchToProps = {
-  getTransactions,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(GetTransactions)
+export default GetTransactions
