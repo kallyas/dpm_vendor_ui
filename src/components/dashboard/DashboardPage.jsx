@@ -1,57 +1,32 @@
-import React, {useState, useEffect, useCallback, useMemo} from "react"
+import { useMemo } from "react"
 import { Container, Box, Typography, Grid } from "@mui/material"
-import {TrendingUp, Alarm} from "@mui/icons-material"
-import {RouteCard} from "../shared/routeCard/RouteCard"
-import {TripCard} from "../shared/tripCard/TripCard"
-import {getTrips} from "../../redux/slices/tripsSlice"
-import {getRoutes} from "../../redux/slices/routesSlice"
-import {useSelector, useDispatch} from "react-redux"
-import {toast} from "react-toastify"
-import {CardsSkeleton} from "./skeleton"
+import { TrendingUp, Alarm } from "@mui/icons-material"
+import { RouteCard } from "../shared/routeCard/RouteCard"
+import { TripCard } from "../shared/tripCard/TripCard"
+import { useGetTripsQuery, useGetRoutesQuery } from "../../redux/api/apiSlice"
+import { CardsSkeleton } from "./skeleton"
 import ContentLoader from "react-content-loader"
 
 const Dashboard = () => {
-  const dispatch = useDispatch()
-  const tripsState = useSelector((state) => state.trips)
-  const routesState = useSelector((state) => state.routes)
-  const [fetching, setFetching] = useState(true)
+  const { data: routes = [], isLoading: routesLoading } = useGetRoutesQuery()
+  const { data: trips = [], isLoading: tripsLoading } = useGetTripsQuery()
 
-  useEffect(() => {
-    setFetching(true)
-    dispatch(getRoutes())
-    dispatch(getTrips())
-  }, [dispatch])
-
-  useEffect(() => {
-    if (tripsState.error || routesState.error) {
-      setFetching(false)
-      if (tripsState.error) {
-        toast.error(tripsState.error.message)
-      }
-      if (routesState.error) {
-        toast.error(routesState.error.message)
-      }
-    }
-
-    if (tripsState.data || routesState.data) {
-      setFetching(false)
-    }
-  }, [tripsState, routesState])
+  const fetching = routesLoading || tripsLoading
 
   const displayRoutes = useMemo(() => {
-    return routesState.data?.slice(0, 8) ?? []
-  }, [routesState.data])
+    return routes.slice(0, 8)
+  }, [routes])
 
   const displayTrips = useMemo(() => {
-    return tripsState.data?.slice(0, 8) ?? []
-  }, [tripsState.data])
+    return trips.slice(0, 8)
+  }, [trips])
 
   const hasData = displayRoutes.length > 0 || displayTrips.length > 0
 
   return (
     <Container maxWidth="lg" sx={{
       py: 4,
-      px: {xs: 2, sm: 3, md: 4},
+      px: { xs: 2, sm: 3, md: 4 },
     }}>
       <Box sx={{ mb: 5 }}>
         <Typography 
@@ -96,7 +71,7 @@ const Dashboard = () => {
         </Box>
         <Grid container spacing={2}>
           {fetching ? (
-            <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
+            <ContentLoader style={{ width: "100%", margin: "0px", height: "360" }}>
               <CardsSkeleton />
             </ContentLoader>
           ) : (
@@ -129,7 +104,7 @@ const Dashboard = () => {
         </Box>
         <Grid container spacing={2}>
           {fetching ? (
-            <ContentLoader style={{width: "100%", margin: "0px", height: "360"}}>
+            <ContentLoader style={{ width: "100%", margin: "0px", height: "360" }}>
               <CardsSkeleton />
             </ContentLoader>
           ) : (
