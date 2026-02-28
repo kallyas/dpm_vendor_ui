@@ -7,7 +7,9 @@ export default configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: true,
+      serializableCheck: {
+        ignoredActions: [api.util.matchFulfilled, api.util.matchPending],
+      },
       immutableCheck: true,
     }).concat(api.middleware),
   devTools: import.meta.env.MODE !== 'production',
