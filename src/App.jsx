@@ -1,59 +1,68 @@
-import React from "react"
+import React, {Suspense, lazy} from "react"
 import {BrowserRouter as Router, Route, Routes as RouterRoutes, Navigate, useLocation} from "react-router-dom"
 import {ToastContainer} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import {Provider} from "react-redux"
-import {Box} from "@mui/material"
-import "./App.css"
-import store from "./redux/store"
-import LoginPage from "./components/login/LoginPage"
-import Logout from "./components/logout/Logout"
+import {Box, CircularProgress} from "@mui/material"
 import {ThemeProvider} from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import AppTheme from "./assets/styles/index"
-import Dashboard from "./components/dashboard/DashboardPage"
+import store from "./redux/store"
 import {SideNav} from "./components/shared/sideNav/SideNav"
-import Buses from "./components/Buses/Buses"
-import Trips from "./components/Trips/Trips"
 import {WithAuth} from "./components/withAuth/WithAuth"
-import Routes from "./components/routes/RoutesPage"
-import {Footer} from "./components/shared/footer/Footer"
-import Staff from "./components/Staff/StaffPage"
-import SingleRoute from "./components/singleRoute/SingleRoute"
-import GetTickets from "./components/Trips/GetTickets"
-import GetTransactions from "./components/Transactions/GetTransactions"
+
+const LoginPage = lazy(() => import("./components/login/LoginPage"))
+const Dashboard = lazy(() => import("./components/dashboard/DashboardPage"))
+const Buses = lazy(() => import("./components/Buses/Buses"))
+const Trips = lazy(() => import("./components/Trips/Trips"))
+const Routes = lazy(() => import("./components/routes/RoutesPage"))
+const Staff = lazy(() => import("./components/Staff/StaffPage"))
+const SingleRoute = lazy(() => import("./components/singleRoute/SingleRoute"))
+const GetTickets = lazy(() => import("./components/Trips/GetTickets"))
+const GetTransactions = lazy(() => import("./components/Transactions/GetTransactions"))
+
+const LoadingFallback = () => (
+  <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh"}}>
+    <CircularProgress />
+  </Box>
+)
 
 function AppContent() {
-  const location = useLocation();
-  const publicRoutes = ['/login', '/logout'];
-  const showSideNav = !publicRoutes.includes(location.pathname);
+  const location = useLocation()
+  const publicRoutes = ['/login', '/logout']
+  const showSideNav = !publicRoutes.includes(location.pathname)
 
   return (
     <>
       {showSideNav && <SideNav />}
       <Box 
+        component="main"
         sx={{
-          marginLeft: showSideNav ? { xs: 0, md: '80px' } : 0,
-          transition: 'margin-left 0.3s ease',
+          ml: showSideNav ? { xs: 0, md: "260px" } : 0,
+          transition: "margin-left 0.3s ease",
+          minHeight: "100vh",
+          bgcolor: "background.default",
         }}
       >
-        <RouterRoutes>
-          <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
-          <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
-          <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
-          <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
-          <Route path="/users" element={<Staff />} />
-          <Route path="/routes/:id" element={<SingleRoute />} />
-          <Route path="/trip/:id" element={<GetTickets />} />
-          <Route path="/transactions" element={<GetTransactions />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </RouterRoutes>
+        <Suspense fallback={<LoadingFallback />}>
+          <RouterRoutes>
+            <Route path="/" element={<WithAuth><Dashboard /></WithAuth>} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/logout" element={<WithAuth><Navigate to="/login" replace /></WithAuth>} />
+            <Route path="/vehicles" element={<WithAuth><Buses /></WithAuth>} />
+            <Route path="/trips" element={<WithAuth><Trips /></WithAuth>} />
+            <Route path="/routes" element={<WithAuth><Routes /></WithAuth>} />
+            <Route path="/dashboard" element={<WithAuth><Dashboard /></WithAuth>} />
+            <Route path="/users" element={<WithAuth><Staff /></WithAuth>} />
+            <Route path="/routes/:id" element={<WithAuth><SingleRoute /></WithAuth>} />
+            <Route path="/trip/:id" element={<WithAuth><GetTickets /></WithAuth>} />
+            <Route path="/transactions" element={<WithAuth><GetTransactions /></WithAuth>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </RouterRoutes>
+        </Suspense>
       </Box>
     </>
-  );
+  )
 }
 
 function App(props) {
@@ -61,15 +70,10 @@ function App(props) {
     <ThemeProvider theme={AppTheme}>
       <CssBaseline />
       <Provider store={store}>
-        <ToastContainer />
-        <div className="App">
-          <div style={{minHeight: "95vh"}}>
-            <Router>
-              <AppContent />
-            </Router>
-          </div>
-          <Footer />
-        </div>
+        <ToastContainer position="top-right" autoClose={3000} />
+        <Router>
+          <AppContent />
+        </Router>
       </Provider>
     </ThemeProvider>
   )
