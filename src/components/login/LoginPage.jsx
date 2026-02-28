@@ -59,7 +59,7 @@ class LoginPage extends Component {
     const accessToken = localStorage.getItem("DPMAccessToken");
     const refreshTonek = localStorage.getItem("DPMRefreshToken");
     if(accessToken || refreshTonek){
-      this.props.history.push('/dashboard');
+      window.location.assign('/dashboard');
     }
   }
 
