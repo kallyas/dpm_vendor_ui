@@ -26,10 +26,10 @@ const Trips = () => {
   const [addError, setAddError] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
-    route_id: "",
-    vehicle_id: "",
-    tp_fare: "",
-    setoff_time: "",
+    route_id: null,
+    vehicle_id: null,
+    tp_fare: '',
+    setoff_time: '',
   })
 
   useMemo(() => {
@@ -49,7 +49,7 @@ const Trips = () => {
   const toggleAdd = useCallback(() => {
     setShowAdd((prev) => !prev)
     setShowUpdate(false)
-    setFormData({ route_id: "", vehicle_id: "", tp_fare: "", setoff_time: "" })
+    setFormData({ route_id: null, vehicle_id: null, tp_fare: '', setoff_time: '' })
   }, [])
 
   const toggleUpdate = useCallback(() => {
