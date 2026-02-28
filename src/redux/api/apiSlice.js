@@ -50,6 +50,12 @@ const getArrayData = (response) => {
   return [];
 };
 
+const toNumber = (val) => {
+  if (val === '' || val === null || val === undefined) return null;
+  const num = Number(val);
+  return isNaN(num) ? null : num;
+};
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
@@ -143,9 +149,9 @@ export const api = createApi({
             date,
             time,
             setoff_time,
-            vehicle_id,
-            route_id,
-            capacity,
+            vehicle_id: toNumber(vehicle_id),
+            route_id: toNumber(route_id),
+            capacity: toNumber(capacity),
           };
         });
       },
@@ -177,9 +183,9 @@ export const api = createApi({
             date,
             time,
             setoff_time,
-            vehicle_id,
-            route_id,
-            capacity,
+            vehicle_id: toNumber(vehicle_id),
+            route_id: toNumber(route_id),
+            capacity: toNumber(capacity),
           };
         });
       },
@@ -208,10 +214,10 @@ export const api = createApi({
           const bookedTime = time?.split('.')[0] || '';
           return {
             id,
-            ticket_capacity,
-            status_id,
+            ticket_capacity: toNumber(ticket_capacity),
+            status_id: toNumber(status_id),
             ticket_number,
-            ticket_request_id,
+            ticket_request_id: toNumber(ticket_request_id),
             date,
             time,
             bookedTime,
@@ -237,7 +243,7 @@ export const api = createApi({
           return {
             date,
             bookedTime,
-            amount,
+            amount: toNumber(amount),
             payee_number,
             payer_number,
             status,
