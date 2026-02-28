@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { Container, Box, Typography } from "@mui/material"
 import SharedTable from "../shared/sharedTable/SharedTable"
 import { useGetTripsQuery } from "../../redux/api/apiSlice"
