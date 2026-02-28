@@ -13,6 +13,7 @@ import {
   InputAdornment,
   Chip,
   Typography,
+  TableCell,
 } from "@mui/material"
 import ContentLoader from "react-content-loader"
 import {Edit, Add, Search, Clear} from "@mui/icons-material"
@@ -204,7 +205,7 @@ export default function SharedTable(props) {
             ) : paginatedData.length === 0 ? (
               <TableBody>
                 <TableRow>
-                  <StyledTableCell colSpan={headers.length + 1} align="center" sx={{ py: 8 }}>
+                  <TableCell colSpan={headers.length + 1} align="center" sx={{ py: 8 }}>
                     <Box sx={{ textAlign: "center" }}>
                       <Typography variant="h6" color="text.secondary" gutterBottom>
                         No Data Found
@@ -213,7 +214,7 @@ export default function SharedTable(props) {
                         {searchQuery ? "Try adjusting your search criteria" : "No records available"}
                       </Typography>
                     </Box>
-                  </StyledTableCell>
+                  </TableCell>
                 </TableRow>
               </TableBody>
             ) : (
