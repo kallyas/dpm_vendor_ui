@@ -43,6 +43,13 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return result;
 };
 
+const getArrayData = (response) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response?.data)) return response.data;
+  return [];
+};
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
@@ -61,6 +68,7 @@ export const api = createApi({
     getVehicles: builder.query({
       query: () => '/vehicles',
       providesTags: ['Vehicles'],
+      transformResponse: (response) => getArrayData(response),
     }),
     addVehicle: builder.mutation({
       query: (vehicle) => ({
@@ -84,7 +92,8 @@ export const api = createApi({
       query: () => '/routes',
       providesTags: ['Routes'],
       transformResponse: (response) => {
-        return response.data.map((entry) => ({
+        const data = getArrayData(response);
+        return data.map((entry) => ({
           ...entry,
           trips: entry.trips?.length || 0,
         }));
@@ -95,6 +104,7 @@ export const api = createApi({
     getStaff: builder.query({
       query: () => '/vendor/users',
       providesTags: ['Staff'],
+      transformResponse: (response) => getArrayData(response),
     }),
     addUser: builder.mutation({
       query: (user) => ({
@@ -110,16 +120,19 @@ export const api = createApi({
       query: () => '/trips?page=1&limit=100',
       providesTags: ['Trips'],
       transformResponse: (response) => {
-        return response.data.map((entry) => {
+        const data = getArrayData(response);
+        return data.map((entry) => {
           const {
             id,
-            route: { destination, start_point },
-            setoff_time,
-            vehicle: { number_plate, capacity },
+            route = {},
+            setoff_time = '',
+            vehicle = {},
             tp_fare,
             vehicle_id,
             route_id,
           } = entry;
+          const { destination = '', start_point = '' } = route;
+          const { number_plate = '', capacity = '' } = vehicle;
           const [date, time] = setoff_time.split('T');
           return {
             id,
@@ -141,16 +154,19 @@ export const api = createApi({
       query: (id) => `/route_trips/${id}`,
       providesTags: ['Trips'],
       transformResponse: (response) => {
-        return response.data.map((entry) => {
+        const data = getArrayData(response);
+        return data.map((entry) => {
           const {
             id,
-            route: { destination, start_point },
-            setoff_time,
-            vehicle: { number_plate, capacity },
+            route = {},
+            setoff_time = '',
+            vehicle = {},
             tp_fare,
             vehicle_id,
             route_id,
           } = entry;
+          const { destination = '', start_point = '' } = route;
+          const { number_plate = '', capacity = '' } = vehicle;
           const [date, time] = setoff_time.split('T');
           return {
             id,
@@ -174,21 +190,22 @@ export const api = createApi({
       query: (id) => `/trip_tickets/${id}`,
       providesTags: ['Tickets'],
       transformResponse: (response) => {
-        return response.data.map((entry) => {
+        const data = getArrayData(response);
+        return data.map((entry) => {
           const {
             id,
             ticket_capacity,
             status_id,
             ticket_number,
             ticket_request_id,
-            date_created,
+            date_created = '',
             phone_number,
             start_point,
             destination,
             status_name,
           } = entry;
           const [date, time] = date_created.split('T');
-          const bookedTime = time.split('.')[0];
+          const bookedTime = time?.split('.')[0] || '';
           return {
             id,
             ticket_capacity,
@@ -212,10 +229,11 @@ export const api = createApi({
       query: () => '/mm_transactions',
       providesTags: ['Transactions'],
       transformResponse: (response) => {
-        return response.data.map((transaction) => {
-          const { amount, payee_number, payer_number, status, date_created } = transaction;
+        const data = getArrayData(response);
+        return data.map((transaction) => {
+          const { amount, payee_number, payer_number, status, date_created = '' } = transaction;
           const [date, time] = date_created.split('T');
-          const bookedTime = time.split('.')[0];
+          const bookedTime = time?.split('.')[0] || '';
           return {
             date,
             bookedTime,
